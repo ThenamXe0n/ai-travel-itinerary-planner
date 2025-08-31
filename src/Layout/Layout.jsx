@@ -1,4 +1,3 @@
-import React from 'react'
 import Navbar from '../components/Navbar'
 import TabNavBar from '../components/TabNavBar'
 import { Outlet, useLocation } from 'react-router-dom'

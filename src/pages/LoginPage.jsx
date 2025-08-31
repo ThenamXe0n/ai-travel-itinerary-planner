@@ -23,7 +23,7 @@ const LoginPage = () => {
     // Loading.circle();
     console.log(data);
     try {
-      const res = await axiosClient().post("/user/login", data);
+      const res = await axiosClient.post("/user/login", data);
       let response = res.data;
       if (!response.status) {
         Notify.failure(response.message);
@@ -41,13 +41,13 @@ const LoginPage = () => {
   const user = Cookies.get("Logtk");
 
   useEffect(() => {
-    console.log("Socket Connected:", socket.connected,socket?.id);
+    console.log("Socket Connected:", socket.connected, socket?.id);
 
     socket.on("connect", (socket) => {
       console.log("Socket Id:", socket?.id);
       let user = localStorage.getItem("user");
-      console.log("connecting//...")
-      socket.emit("registerId", {name:user});
+      console.log("connecting//...");
+      socket.emit("registerId", { name: user });
       console.log("Successfully connected to Socket.IO server");
     });
 
@@ -68,27 +68,17 @@ const LoginPage = () => {
 
   return (
     <>
-      <button
-        onClick={() =>
-          socket.emit("send_message", {
-            id: prompt("id"),
-            message: prompt("enterId"),
-          })
-        }
-      >
-        send
-      </button>
       {user && user.length ? (
         <Navigate to={"/"} />
       ) : (
-        <section className="bg-black h-screen w-screen flex items-center justify-center">
+        <section className="bg-slate-300 h-screen w-screen flex items-center justify-center">
           <div
-            className="border-2 flex-col border-gray-600  flex rounded-xl p-4  h-fit"
+            className=" flex-col bg-white   flex rounded-xl p-4  h-fit"
             id="forn-container"
           >
             <div className="w-full ">
               <img src={ImagePath.logo} className="invert m-auto" alt="logo" />
-              <h1 className="font-bold text-white text-2xl uppercase text-center mt-4">
+              <h1 className="font-bold text-black text-2xl uppercase text-center mt-4">
                 Login User
               </h1>
             </div>
@@ -103,7 +93,7 @@ const LoginPage = () => {
                   type="text"
                   autoComplete={false}
                   autoFocus={false}
-                  className="w-full p-1 autofill:focus:bg-transparent!important focus:border-b-2 border-b text-white outline-none focus:border-white border-gray-500 bg-transparent text-xl"
+                  className="w-full p-1 autofill:focus:bg-transparent!important focus:border-b-2 border-b text-black outline-none focus:border-white border-gray-500 bg-transparent text-xl"
                   placeholder="enter user name"
                 />
               </div>
@@ -115,7 +105,7 @@ const LoginPage = () => {
                   name="password"
                   autoComplete={false}
                   type="password"
-                  className="w-full p-1 focus:border-b-2 border-b text-white outline-none focus:border-white border-gray-500 bg-transparent text-xl"
+                  className="w-full p-1 focus:border-b-2 border-b text-black outline-none focus:border-white border-gray-500 bg-transparent text-xl"
                   placeholder="enter password "
                 />
               </div>
@@ -125,7 +115,7 @@ const LoginPage = () => {
               </button>
             </form>
             <div>
-              <p className="text-white text-center mt-4">
+              <p className="text-black text-center mt-4">
                 create a new account?{" "}
                 <Link
                   className="text-blue-600 font-medium uppercase text-lg"

@@ -5,4 +5,5 @@ export const path = {
   people: "people",
   register: "/register",
   login: "/login",
+  friends:"/connections"
 };

@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        "bg": "url('./assets/backgroundImg.png')",
+        "bg": "url('https://wallpapers.com/images/hd/hd-vacation-house-in-the-beach-j4jasqgcc5ismew8.jpg')",
       },
     },
     fontFamily: {

@@ -14,3 +14,36 @@ input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
   -webkit-text-fill-color: inherit !important; /* Keeps the text color consistent */
 }
+
+ul#keyFeature-list {
+  list-style: none; /* remove default bullet */
+  padding: 0; /* reset default padding */
+}
+
+ul#keyFeature-list li {
+  display: flex; /* aligns image + text nicely */
+  align-items: center;
+  font-size: 18px;
+  margin-bottom: 8px; /* optional spacing between items */
+}
+
+ul#keyFeature-list li::before {
+  content: url("./assets/Relume.png");
+  display: inline-block;
+  width: 20px; /* adjust size */
+  height: 20px;
+  margin-right: 12px; /* 👈 space between marker and text */
+}
+
+section#hero::after {
+  content: "";
+  height: 300px;
+  width: 500px;
+  background-image: url("./assets/vector-plane.png");
+  background-size: cover;
+  display: flex;
+  position: absolute;
+  bottom: 0px;
+  z-index: -1;
+  
+}

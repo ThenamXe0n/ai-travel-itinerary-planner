@@ -1,88 +1,131 @@
-import React, { useRef, useState } from "react";
-const messages = [
-  {
-    id: 1,
-    content: "Hey, how's the planning going?",
-    sender: "Adarsh",
-    isSent: false,
-    timestamp: "10:30 AM",
-  },
-  {
-    id: 2,
-    content: "I've been looking at some great places we could visit!",
-    sender: "You",
-    isSent: true,
-    timestamp: "10:31 AM",
-  },
-  {
-    id: 3,
-    content: "That sounds awesome! Could you share some details?",
-    sender: "Adarsh",
-    isSent: false,
-    timestamp: "10:32 AM",
-  },
-  {
-    id: 4,
-    content: "I'll send you the links",
-    sender: "You",
-    isSent: true,
-    timestamp: "10:33 AM",
-  },
-  {
-    id: 4,
-    content: "I'll send you the links",
-    sender: "You",
-    isSent: true,
-    timestamp: "10:33 AM",
-  },
-  {
-    id: 4,
-    content:
-      "https://img.freepik.com/premium-photo/web-developer-digital-avatar-generative-ai_934475-9048.jpg",
-    contentType: "image",
-    sender: "You",
-    isSent: true,
-    timestamp: "10:33 AM",
-  },
-  {
-    id: 4,
-    content:
-      "https://img.freepik.com/premium-photo/web-developer-digital-avatar-generative-ai_934475-9048.jpg",
-    contentType: "image",
-    sender: "raj",
-    isSent: true,
-    timestamp: "10:33 AM",
-  },
-  {
-    id: 4,
-    content:
-      "I'll send you the lkjdkjklsdjlkfj sdlkjsljflksjd lkjlkfkjlflkjsdln ,jhlknjkhjk khsdhj kjhjkhf kjhh kjjhjkhjk kjhkjhjkhsdhiirh uouoiunsnfh y iuoius ur  uihf oiahfu  links",
-    sender: "You",
-    isSent: true,
-    timestamp: "10:33 AM",
-  },
-];
+import React, { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { socket } from "../../socket";
+// const messages = [
+//   {
+//     id: 1,
+//     content: "Hey, how's the planning going?",
+//     sender: "Adarsh",
+//     isSent: false,
+//     timestamp: "10:30 AM",
+//   },
+//   {
+//     id: 2,
+//     content: "I've been looking at some great places we could visit!",
+//     sender: "You",
+//     isSent: true,
+//     timestamp: "10:31 AM",
+//   },
+//   {
+//     id: 3,
+//     content: "That sounds awesome! Could you share some details?",
+//     sender: "Adarsh",
+//     isSent: false,
+//     timestamp: "10:32 AM",
+//   },
+//   {
+//     id: 4,
+//     content: "I'll send you the links",
+//     sender: "You",
+//     isSent: true,
+//     timestamp: "10:33 AM",
+//   },
+//   {
+//     id: 4,
+//     content: "I'll send you the links",
+//     sender: "You",
+//     isSent: true,
+//     timestamp: "10:33 AM",
+//   },
+//   {
+//     id: 4,
+//     content:
+//       "https://img.freepik.com/premium-photo/web-developer-digital-avatar-generative-ai_934475-9048.jpg",
+//     contentType: "image",
+//     sender: "You",
+//     isSent: true,
+//     timestamp: "10:33 AM",
+//   },
+//   {
+//     id: 4,
+//     content:
+//       "https://img.freepik.com/premium-photo/web-developer-digital-avatar-generative-ai_934475-9048.jpg",
+//     contentType: "image",
+//     sender: "raj",
+//     isSent: true,
+//     timestamp: "10:33 AM",
+//   },
+//   {
+//     id: 4,
+//     content:
+//       "I'll send you the lkjdkjklsdjlkfj sdlkjsljflksjd lkjlkfkjlflkjsdln ,jhlknjkhjk khsdhj kjhjkhf kjhh kjjhjkhjk kjhkjhjkhsdhiirh uouoiunsnfh y iuoius ur  uihf oiahfu  links",
+//     sender: "You",
+//     isSent: true,
+//     timestamp: "10:33 AM",
+//   },
+// ];
 const ChatBox = ({ selectedUser }) => {
-  const inputRef =  useRef()
-  let userName = localStorage.getItem("user")
+  const inputRef = useRef();
+  const debounceRef = useRef();
+  let userName = useSelector((state) => state.auth?.userDetails?.name);
+  let userId = useSelector((state) => state.auth?.userDetails?.id);
   const [shareMedia, setShareMedia] = useState(false);
-  const [message, setMessage] = useState(messages);
-  const [messageText,setMessageText] = useState({
-    id: message.length+1,
+  const [message, setMessage] = useState([]);
+  const [messageText, setMessageText] = useState({
+    id: message.length + 1,
     content: "Hey, how's the planning going?",
     sender: userName,
     isSent: false,
     timestamp: "10:30 AM",
-  },)
+  });
   console.log(selectedUser, "kjkl");
 
-  function handleSendMessage(messageObj){
-    setMessage([...message,messageObj]);
-    setMessageText(null)
-    inputRef.current.value =""
-  };
+  function handleSendMessage(messageObj) {
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      socket.emit("privateMessage", {
+        senderId: userId,
+        receiverId: selectedUser._id,
+        message: inputRef.current.value,
+        time: Date.now(),
+      });
 
-  console.log(messageText)
+      setMessage((prev) => [
+        ...prev,
+        {
+          sender: userId,
+          receiver: selectedUser._id,
+          content: inputRef.current.value,
+          time: Date.now(),
+        },
+      ]);
+
+      setMessageText(null);
+      inputRef.current.value = "";
+    }, 500);
+  }
+
+  console.log(messageText);
+
+  useEffect(() => {
+    const handleMessageReceiver = (msg) => {
+      let messageFormat = {
+        id: msg._id,
+        content: msg.content,
+        sender: msg.sender,
+        receiver: msg.receiver,
+        isSent: true,
+        timestamp: msg.time,
+      };
+      setMessage((prev) => [...prev, messageFormat]);
+    };
+    socket.on("privateMessage", handleMessageReceiver);
+    return () => {
+      socket.off("privateMessage", handleMessageReceiver);
+    };
+  }, []);
+
+  console.log(message);
 
   return (
     <>
@@ -95,7 +138,7 @@ const ChatBox = ({ selectedUser }) => {
                 <div className="h-12 border-2 overflow-hidden aspect-square w-12  rounded-full">
                   <img
                     className="object-cover"
-                    src={selectedUser?.avatar}
+                    src={selectedUser?.profilePicture}
                     alt={selectedUser?.name}
                   />
                   {/* <AvatarFallback>{selectedUser.name[0]}</AvatarFallback> */}
@@ -132,53 +175,62 @@ const ChatBox = ({ selectedUser }) => {
 
           <div className="flex-1 px-6 py-4">
             <div className="space-y-4 max-h-[40vh] overflow-y-scroll">
-              {message.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${
-                    message.sender === userName ? "justify-end" : "justify-start"
-                  } `}
-                >
-                  <div>
-                    {/* -------------profile------------- */}
-                    {message.sender !== userName && (
-                      <div className="h-8 border-2 overflow-hidden aspect-square w-8  rounded-full">
-                        <img
-                          className="object-cover"
-                          src={selectedUser?.avatar}
-                          alt={selectedUser?.name}
-                        />
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex flex-col gap-1 max-w-[70%]">
-                    {message.contentType !== "image" && (
-                      <div
-                        className={`rounded-2xl lg:max-w-[30vw] md:max-w-[40vw] max-w-[80vw] px-4 py-2 shadow-sm
+              {message
+                .filter(
+                  (msg) =>
+                    (msg.sender === userId &&
+                      msg.receiver === selectedUser._id) ||
+                    (msg.sender === selectedUser._id && msg.receiver === userId)
+                )
+                .map((message, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex ${
+                      message.sender === userId
+                        ? "justify-end"
+                        : "justify-start"
+                    } `}
+                  >
+                    <div>
+                      {/* -------------profile------------- */}
+                      {message.sender !== userId && (
+                        <div className="h-8 border-2 overflow-hidden aspect-square w-8  rounded-full">
+                          <img
+                            className="object-cover"
+                            src={selectedUser?.avatar}
+                            alt={selectedUser?.name}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-col gap-1 max-w-[70%]">
+                      {message.contentType !== "image" && (
+                        <div
+                          className={`rounded-2xl lg:max-w-[30vw] md:max-w-[40vw] max-w-[80vw] px-4 py-2 shadow-sm
                 ${
-                  message.sender === userName
+                  message.sender === userId
                     ? "bg-black text-white rounded-br-sm"
                     : "bg-white text-black rounded-bl-sm"
                 }`}
-                      >
-                        {message.content}
-                      </div>
-                    )}
-                    {message.contentType === "image" && (
-                      <div className="size-52 border rounded-xl shadow-lg overflow-hidden mr-3 rounded-br-sm">
-                        <img
-                          src={message.content}
-                          alt="message"
-                          className=" object-cover rounded-xl"
-                        />
-                      </div>
-                    )}
-                    <span className="text-xs text-muted-foreground px-2">
-                      {message.timestamp}
-                    </span>
+                        >
+                          {message.content}
+                        </div>
+                      )}
+                      {message.contentType === "image" && (
+                        <div className="size-52 border rounded-xl shadow-lg overflow-hidden mr-3 rounded-br-sm">
+                          <img
+                            src={message.content}
+                            alt="message"
+                            className=" object-cover rounded-xl"
+                          />
+                        </div>
+                      )}
+                      <span className="text-xs text-muted-foreground px-2">
+                        {message.timestamp}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
 
@@ -272,8 +324,7 @@ const ChatBox = ({ selectedUser }) => {
               <div className="relative flex-1 flex items-center">
                 {" "}
                 <input
-                ref={inputRef}
-                onChange={(e)=>{setMessageText({...messageText,content:e.target.value})}}
+                  ref={inputRef}
                   placeholder="Type a message"
                   className=" p-2 text-xl w-full rounded-full border border-gray-300"
                 />
@@ -314,7 +365,7 @@ const ChatBox = ({ selectedUser }) => {
                     />
                   </svg>
                 </div>
-                <div onClick={()=>handleSendMessage(messageText)} id="send">
+                <div onClick={() => handleSendMessage(messageText)} id="send">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"

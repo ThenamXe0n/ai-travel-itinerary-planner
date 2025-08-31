@@ -81,9 +81,9 @@ const RegisterPage = () => {
   // console.log(profile);
 
   return (
-    <section className="bg-black h-screen w-screen flex items-center justify-center">
+    <section className="bg-slate-300 h-screen w-screen flex items-center justify-center">
       <div
-        className="border-2 flex-col border-gray-600  flex rounded-xl p-4  h-fit"
+        className=" flex-col  bg-white  flex rounded-xl p-4  h-fit"
         id="forn-container"
       >
         <div className="w-full ">
@@ -91,7 +91,7 @@ const RegisterPage = () => {
           <p className="text-center my-2 text-[#2f4f4f]">
             register below and start planning for your trip{" "}
           </p>
-          <h1 className="font-bold text-white text-2xl uppercase text-center mt-4">
+          <h1 className="font-bold text-black text-2xl uppercase text-center mt-4">
             Register as User
           </h1>
         </div>
@@ -111,7 +111,7 @@ const RegisterPage = () => {
               {...register("username")}
               type="text"
               autoFocus={false}
-              className="w-full focus:border-b-2 border-b text-white outline-none focus:border-white border-gray-500 bg-transparent text-xl"
+              className="w-full focus:border-b-2 border-b text-black outline-none focus:border-white border-gray-500 bg-transparent text-xl"
               placeholder="enter user name"
             />
           </div>
@@ -123,7 +123,7 @@ const RegisterPage = () => {
               name="mobile"
               type="text"
               maxLength={10}
-              className="w-full focus:border-b-2 border-b text-white outline-none focus:border-white border-gray-500 bg-transparent text-xl"
+              className="w-full focus:border-b-2 border-b text-black outline-none focus:border-white border-gray-500 bg-transparent text-xl"
               placeholder="enter mobile number "
             />
           </div>
@@ -134,7 +134,7 @@ const RegisterPage = () => {
               id="password"
               name="password"
               type="password"
-              className="w-full focus:border-b-2 border-b text-white outline-none focus:border-white border-gray-500 bg-transparent text-xl"
+              className="w-full focus:border-b-2 border-b text-black outline-none focus:border-white border-gray-500 bg-transparent text-xl"
               placeholder="enter password "
             />
           </div>
@@ -147,7 +147,7 @@ const RegisterPage = () => {
               id="confirm-password"
               name="confirm-password"
               type="confirm-password"
-              className="w-full focus:border-b-2 border-b text-white outline-none focus:border-white border-gray-500 bg-transparent text-xl"
+              className="w-full focus:border-b-2 border-b text-black outline-none focus:border-white border-gray-500 bg-transparent text-xl"
               placeholder="Re-enter password"
             />
           </div>
@@ -157,7 +157,7 @@ const RegisterPage = () => {
           </button>
         </form>
         <div>
-          <p className="text-white text-center mt-4">
+          <p className="text-black text-center mt-4">
             Already have an account?{" "}
             <Link
               className="text-blue-600 font-medium uppercase text-lg"
